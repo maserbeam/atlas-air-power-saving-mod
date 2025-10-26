@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiet Noise Generator</title>
+    <style>
+        body {
+            background-color: #333333; /* Ash grey */
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+        .controls {
+            text-align: center;
+        }
+        input[type="range"] {
+            width: 200px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <button id="startButton">Start Noise</button>
+        <button id="stopButton" disabled>Stop Noise</button>
+        <div>
+            <label for="volumeSlider">Adjust Volume: </label>
+            <input type="range" id="volumeSlider" min="0" max="0.2" step="0.001" value="0.05" disabled>
+            <div>Current Volume: <span id="volumeValue">0.05</span></div>
+        </div>
+    </div>
+    <audio id="noiseAudio" loop src="noise.mp3"></audio>
+    <script>
+        const audio = document.getElementById('noiseAudio');
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeValueDisplay = document.getElementById('volumeValue');
+
+        startButton.addEventListener('click', () => {
+            audio.play().then(() => {
+                // Enable slider and stop button, disable start button
+                volumeSlider.disabled = false;
+                stopButton.disabled = false;
+                startButton.disabled = true;
+            }).catch(error => {
+                console.error('Audio playback failed:', error);
+                alert('Failed to play audio. Ensure noise.mp3 is in the same folder and try a local server.');
+            });
+        });
+
+        stopButton.addEventListener('click', () => {
+            audio.pause();
+            audio.currentTime = 0; // Reset to start for next play
+            // Disable slider and stop button, enable start button
+            volumeSlider.disabled = true;
+            stopButton.disabled = true;
+            startButton.disabled = false;
+        });
+
+        volumeSlider.addEventListener('input', () => {
+            const volumeValue = parseFloat(volumeSlider.value);
+            audio.volume = volumeValue;
+            volumeValueDisplay.textContent = volumeValue.toFixed(3);
+        });
+    </script>
+</body>
+</html>
